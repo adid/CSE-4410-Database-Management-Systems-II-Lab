@@ -147,3 +147,5 @@ insert into prereq values ('CS-315', 'CS-101');
 insert into prereq values ('CS-319', 'CS-101');
 insert into prereq values ('CS-347', 'CS-101');
 insert into prereq values ('EE-181', 'PHY-101');
+
+commit;

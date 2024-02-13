@@ -60,3 +60,37 @@ WHERE ROWNUM <= 1;
 
 
 
+CREATE OR REPLACE PROCEDURE insert_jane_doe AS
+    v_dept_name student.dept_name%TYPE;
+    v_max_id NUMBER;
+BEGIN
+    -- Find the department with the lowest number of students
+    SELECT dept_name
+    INTO v_dept_name
+    FROM (
+        SELECT dept_name, COUNT(*) AS student_count
+        FROM student
+        GROUP BY dept_name
+        ORDER BY COUNT(*) ASC
+    )
+    WHERE ROWNUM = 1;
+
+    -- Find the highest existing student ID
+    SELECT MAX(TO_NUMBER(ID)) INTO v_max_id FROM student;
+
+    -- Insert Jane Doe into the database
+    INSERT INTO student(ID, name, dept_name, tot_cred) 
+    VALUES (v_max_id + 1, 'Jane Doe', v_dept_name, 0);
+
+    -- Commit the transaction
+    COMMIT;
+    
+    -- Output success message
+    DBMS_OUTPUT.PUT_LINE('Jane Doe successfully inserted into ' || v_dept_name || ' department.');
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Output error message
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+        ROLLBACK;
+END;
+/
